@@ -15,8 +15,10 @@ import com.example.admin.recyclerview_databinding.R.id.parent
 import com.example.admin.recyclerview_databinding.dummy.DummyContent.DummyItem
 import android.graphics.Bitmap
 import android.databinding.adapters.TextViewBindingAdapter.setText
+import android.graphics.BitmapFactory
 import android.view.ContextMenu
 import android.widget.ImageView
+import java.io.File
 
 
 /**
@@ -26,6 +28,7 @@ import android.widget.ImageView
  */
 class MyItemRecyclerViewAdapter(context: Context, val mValues: ObservableArrayList<TextAndImagepath>) : RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder>() {
 
+    val mContext = context
     init {
         mValues.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableList<TextAndImagepath>>() {
 
@@ -68,7 +71,11 @@ class MyItemRecyclerViewAdapter(context: Context, val mValues: ObservableArrayLi
         // データをセット
         holder.mItem = textAndPath
         holder.mTextView.text = textAndPath.text
+        val file = File(mContext.getFilesDir(), "testfile.png")
+        holder.mImage.setImageBitmap(BitmapFactory.decodeFile(file.getPath()))
 
+
+        // /data/user/0/com.example.admin.recyclerview_databinding/files/testfile.png
         // 画像ロード処理
 //        val bmp = loadImage(user.getIconUrl())
 //        holder.getIcon().setImageBitmap(bmp)
@@ -76,11 +83,12 @@ class MyItemRecyclerViewAdapter(context: Context, val mValues: ObservableArrayLi
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mTextView: TextView
-        //val mImagePathView: TextView
+        lateinit var mImage: ImageView
         var mItem: TextAndImagepath? = null
 
         init {
             mTextView = mView.findViewById(R.id.text) as TextView
+            mImage = mView.findViewById(R.id.image) as ImageView
         }
 
         fun getItem(): TextAndImagepath {
