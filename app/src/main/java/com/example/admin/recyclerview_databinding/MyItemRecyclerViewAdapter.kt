@@ -1,5 +1,8 @@
 package com.example.admin.recyclerview_databinding
 
+import android.content.Context
+import android.databinding.ObservableArrayList
+import android.databinding.ObservableList
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -7,15 +10,47 @@ import android.view.ViewGroup
 import android.widget.TextView
 
 import com.example.admin.recyclerview_databinding.ItemFragment.OnListFragmentInteractionListener
+import com.example.admin.recyclerview_databinding.Model.TextAndImagepath
 import com.example.admin.recyclerview_databinding.R.id.parent
 import com.example.admin.recyclerview_databinding.dummy.DummyContent.DummyItem
+import android.graphics.Bitmap
+import android.databinding.adapters.TextViewBindingAdapter.setText
+import android.view.ContextMenu
+import android.widget.ImageView
+
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
  * specified [OnListFragmentInteractionListener].
  * TODO: Replace the implementation with code for your data type.
  */
-class MyItemRecyclerViewAdapter(private val mValues: List<DummyItem>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder>() {
+class MyItemRecyclerViewAdapter(context: Context, val mValues: ObservableArrayList<TextAndImagepath>) : RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder>() {
+
+    init {
+        mValues.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableList<TextAndImagepath>>() {
+
+            override fun onItemRangeRemoved(sender: ObservableList<TextAndImagepath>?, positionStart: Int, itemCount: Int) {
+                notifyItemRangeRemoved(positionStart, itemCount)
+            }
+
+            override fun onItemRangeMoved(sender: ObservableList<TextAndImagepath>?, fromPosition: Int, toPosition: Int, itemCount: Int) {
+                notifyItemMoved(fromPosition, toPosition)
+            }
+
+            override fun onItemRangeChanged(sender: ObservableList<TextAndImagepath>?, positionStart: Int, itemCount: Int) {
+                notifyItemRangeChanged(positionStart, itemCount)
+            }
+
+            override fun onItemRangeInserted(sender: ObservableList<TextAndImagepath>?, positionStart: Int, itemCount: Int) {
+                notifyItemRangeInserted(positionStart, itemCount)
+            }
+
+            override fun onChanged(sender: ObservableList<TextAndImagepath>?) {
+                notifyDataSetChanged()
+
+            }
+        })
+    }
 
     override fun getItemCount(): Int {
         return mValues.size
@@ -28,31 +63,32 @@ class MyItemRecyclerViewAdapter(private val mValues: List<DummyItem>, private va
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.mItem = mValues[position]
-        holder.mIdView.text = mValues[position].id
-        holder.mContentView.text = mValues[position].content
+        val textAndPath = mValues.get(position)
 
-        holder.mView.setOnClickListener {
-            mListener?.onListFragmentInteraction(holder.getItem())
-        }
+        // データをセット
+        holder.mItem = textAndPath
+        holder.mTextView.text = textAndPath.text
+
+        // 画像ロード処理
+//        val bmp = loadImage(user.getIconUrl())
+//        holder.getIcon().setImageBitmap(bmp)
     }
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView
-        val mContentView: TextView
-        var mItem: DummyItem? = null
+        val mTextView: TextView
+        //val mImagePathView: TextView
+        var mItem: TextAndImagepath? = null
 
         init {
-            mIdView = mView.findViewById(R.id.id) as TextView
-            mContentView = mView.findViewById(R.id.content) as TextView
+            mTextView = mView.findViewById(R.id.text) as TextView
         }
 
-        fun getItem(): DummyItem {
+        fun getItem(): TextAndImagepath {
             return mItem!!
         }
 
         override fun toString(): String {
-            return super.toString() + " '" + mContentView.text + "'"
+            return super.toString() + " '" + mItem.toString() + "'"
         }
     }
 }

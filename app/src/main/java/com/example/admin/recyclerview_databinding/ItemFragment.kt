@@ -3,12 +3,14 @@ package com.example.admin.recyclerview_databinding
 import android.content.Context
 import android.os.Bundle
 import android.app.Fragment
+import android.databinding.ObservableArrayList
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.admin.recyclerview_databinding.Model.TextAndImagepath
 
 import com.example.admin.recyclerview_databinding.dummy.DummyContent
 import com.example.admin.recyclerview_databinding.dummy.DummyContent.DummyItem
@@ -28,6 +30,7 @@ class ItemFragment : Fragment() {
     // TODO: Customize parameters
     private var mColumnCount = 1
     private var mListener: OnListFragmentInteractionListener? = null
+    private var oblist = ObservableArrayList<TextAndImagepath>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,13 +48,17 @@ class ItemFragment : Fragment() {
         if (view is RecyclerView) {
             val context = view.getContext()
             val recyclerView = view as RecyclerView
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(LinearLayoutManager(context))
-            } else {
-                recyclerView.setLayoutManager(GridLayoutManager(context, mColumnCount))
-            }
-            recyclerView.setAdapter(MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener))
+            recyclerView.setLayoutManager(LinearLayoutManager(context))
+
+            recyclerView.setAdapter(MyItemRecyclerViewAdapter(context, oblist))
         }
+
+        oblist.add(TextAndImagepath("aaa", "pathyade"))
+        oblist.add(TextAndImagepath("aaa", "pathyade"))
+        oblist.add(TextAndImagepath("aaa", "pathyade"))
+        oblist.add(TextAndImagepath("aaa", "pathyade"))
+
+
         return view
     }
 
